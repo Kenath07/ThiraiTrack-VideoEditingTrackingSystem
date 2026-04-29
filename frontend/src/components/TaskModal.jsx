@@ -6,6 +6,7 @@ import api from '../api/axios';
 const fieldCls =
   'w-full bg-secondary/40 border border-border rounded-xl p-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors';
 
+// Task create and edit modal component
 const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
   const [title, setTitle]           = useState('');
   const [description, setDescription] = useState('');
