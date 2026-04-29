@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Play, Mail, Lock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 /* ── Shared Logo (matches LandingPage) ── */
+// Login page UI component
 function Logo() {
   return (
     <Link to="/" className="inline-flex items-center space-x-2.5 mb-4">
