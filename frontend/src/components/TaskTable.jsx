@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
 import { Eye } from 'lucide-react';
 
+// Task table component for workflow tracking
 const TaskTable = ({ tasks }) => (
   <div className="bg-card rounded-2xl border border-border overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
     <div className="overflow-x-auto">
