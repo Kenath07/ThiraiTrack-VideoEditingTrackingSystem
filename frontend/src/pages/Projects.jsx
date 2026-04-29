@@ -36,7 +36,7 @@ const Projects = () => {
           <h1 className="text-2xl font-bold text-foreground">Projects</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage all video projects</p>
         </div>
-        {['Project Manager', 'Video Editing Head'].includes(user?.role) && (
+        {user?.role === 'Project Manager' && (
           <button
             onClick={() => setIsModalOpen(true)}
             className="inline-flex items-center gap-2 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 hover:-translate-y-0.5"
