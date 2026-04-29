@@ -1,3 +1,4 @@
+// Usage: authorizeRoles('admin', 'manager') → only these roles can access
 const authorizeRoles = (...roles) => {
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
