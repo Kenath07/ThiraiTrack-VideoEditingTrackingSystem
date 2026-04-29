@@ -76,10 +76,10 @@ Use the following credentials to test different roles:
 
 | Role | Email | Password |
 |------|-------|----------|
-| Project Manager | manager@thiraiterra.com | Manager@123 |
-| Video Editing Head | head@thiraiterra.com | Head@123 |
-| Full-Time Video Editor | editor@thiraiterra.com | password123 |
-| Video Editing Intern | intern@thiraiterra.com | password123 |
+| Project Manager | manager@thiraiterra.com | [Set during registration] |
+| Video Editing Head | head@thiraiterra.com | [Set during registration] |
+| Full-Time Video Editor | editor@thiraiterra.com | [Set during registration] |
+| Video Editing Intern | intern@thiraiterra.com | [Set during registration] |
 
 ## 🚀 Local Setup Instructions
 

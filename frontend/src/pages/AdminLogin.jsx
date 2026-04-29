@@ -5,8 +5,8 @@ import { Play, Mail, Lock, ShieldCheck, CheckCircle, XCircle } from 'lucide-reac
 
 /* ── Privileged accounts (frontend gate) ── */
 const PRIVILEGED_ACCOUNTS = [
-  { email: 'manager@thiraiterra.com', password: 'Manager@123', label: 'Project Manager' },
-  { email: 'head@thiraiterra.com',    password: 'Head@123',    label: 'Video Editing Head' },
+  { email: 'manager@thiraiterra.com', label: 'Project Manager' },
+  { email: 'head@thiraiterra.com',    label: 'Video Editing Head' },
 ];
 
 function AdminLogo() {
@@ -79,15 +79,13 @@ const AdminLogin = () => {
 
     const trimmedEmail    = email.toLowerCase().trim();
     const matchedAccount  = PRIVILEGED_ACCOUNTS.find(
-      a => a.email === trimmedEmail && a.password === password
+      a => a.email === trimmedEmail
     );
 
     // Gate: only allow the two privileged accounts
     if (!matchedAccount) {
       setError(
-        isPrivilegedEmail
-          ? 'Incorrect password for this privileged account.'
-          : 'Access denied. This portal is restricted to privileged accounts only.'
+        'Access denied. This portal is restricted to privileged accounts only.'
       );
       return;
     }
@@ -215,18 +213,18 @@ const AdminLogin = () => {
               Privileged Test Accounts
             </p>
             <div className="space-y-2">
-              {PRIVILEGED_ACCOUNTS.map(({ email: e, password: p, label }) => (
+              {PRIVILEGED_ACCOUNTS.map(({ email: e, label }) => (
                 <button
                   key={e}
                   type="button"
-                  onClick={() => { setEmail(e); setPassword(p); setEmailTouched(false); setPasswordTouched(false); setError(''); }}
+                  onClick={() => { setEmail(e); setEmailTouched(false); setPasswordTouched(false); setError(''); }}
                   className="w-full flex items-center justify-between bg-secondary/50 hover:bg-secondary rounded-xl px-3 py-2.5 transition-colors text-left group"
                 >
                   <div>
                     <p className="text-xs font-bold text-foreground">{label}</p>
                     <p className="text-xs text-muted-foreground">{e}</p>
                   </div>
-                  <span className="text-xs font-semibold text-primary group-hover:text-accent transition-colors">{p}</span>
+                  <span className="text-xs font-semibold text-primary group-hover:text-accent transition-colors">Fill Email</span>
                 </button>
               ))}
             </div>
