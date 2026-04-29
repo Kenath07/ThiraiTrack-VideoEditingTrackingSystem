@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { LogOut, Play } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Role abbreviations for display
 const roleShort = {
   'Project Manager':       'Manager',
   'Video Editing Head':    'Head',
@@ -12,6 +13,7 @@ const roleShort = {
 
 const PRIVILEGED_ROLES = ['Project Manager', 'Video Editing Head'];
 
+// Dashboard navbar with user actions
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
