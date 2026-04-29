@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Trash2 } from 'lucide-react';
 import api from '../api/axios';
 
+// Floating AI chatbot component for task assistance
 const Chatbot = () => {
   const [isOpen, setIsOpen]         = useState(false);
   const [messages, setMessages]     = useState([]);
