@@ -4,6 +4,8 @@ A production-ready MERN stack application for managing video editing teams, task
 
 ## 📋 Project Description
 
+// Role credentials and workflow overview
+
 ThiraiTrack is a comprehensive task and project management system designed specifically for video editing teams. It enables seamless collaboration between interns, full-time editors, team heads, and project managers through role-based dashboards and workflows.
 
 ## ✨ Features
@@ -278,7 +280,7 @@ The system follows a real-world video editing department workflow:
    - Views team performance metrics
    - Tracks project completion rates
 
-## �🚢 Deployment
+## �� Deployment
 
 ### Frontend (Netlify)
 1. Build the frontend: `cd frontend && npm run build`
