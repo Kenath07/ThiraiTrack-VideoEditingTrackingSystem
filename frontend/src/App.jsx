@@ -8,6 +8,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
+
+// Configure application routing
+
 import Tasks from './pages/Tasks';
 import TaskDetails from './pages/TaskDetails';
 import Projects from './pages/Projects';
