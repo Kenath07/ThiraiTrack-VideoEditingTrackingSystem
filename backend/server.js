@@ -6,10 +6,25 @@ const { protect } = require('./middleware/authMiddleware');
 
 const app = express();
 
-connectDB();
+// Root route — Vercel expects a response at `/`
+app.get('/', (req, res) => {
+    res.send('Backend running 🚀');
+});
+
+// Safe DB connect: start server tasks without crashing the whole app
+const startServer = async () => {
+    try {
+        await connectDB();
+        console.log('DB connected');
+    } catch (err) {
+        console.error('DB FAILED:', err.message);
+    }
+};
+
+startServer();
 
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: '*',
     credentials: true
 }));
 app.use(express.json());
@@ -30,6 +45,10 @@ app.get('/api/test', (req, res) => {
 app.post('/api/chat-test', protect, async (req, res) => {
     try {
         const OpenAI = require('openai');
+        if (!process.env.GROQ_API_KEY) {
+            return res.status(500).json({ error: 'API key missing' });
+        }
+
         const client = new OpenAI({
             baseURL: 'https://api.groq.com/openai/v1',
             apiKey: process.env.GROQ_API_KEY,
