@@ -6,6 +6,7 @@ import TaskTable from '../components/TaskTable';
 import TaskModal from '../components/TaskModal';
 import { Plus } from 'lucide-react';
 
+// Tasks page with role-based actions
 const Tasks = () => {
   const [tasks, setTasks]           = useState([]);
   const [loading, setLoading]       = useState(true);
