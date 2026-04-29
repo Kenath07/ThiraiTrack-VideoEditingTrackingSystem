@@ -10,6 +10,7 @@ exports.registerUser = async (req, res) => {
     try {
         const { fullName, email, password, confirmPassword, role, phone, experienceLevel, primarySkill, bio } = req.body;
         
+        // Trim all fields
         const trimmedFullName = fullName?.trim();
         const trimmedEmail = email?.trim();
         const trimmedPhone = phone?.trim();
