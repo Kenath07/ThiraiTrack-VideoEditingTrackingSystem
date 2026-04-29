@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Color-coded task status badge component
 const StatusBadge = ({ status }) => {
   const map = {
     'Pending':     'bg-secondary text-secondary-foreground border-border',
