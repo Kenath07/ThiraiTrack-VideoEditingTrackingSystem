@@ -5,6 +5,7 @@ import api from '../api/axios';
 const fieldCls =
   'w-full bg-secondary/40 border border-border rounded-xl p-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors';
 
+// Project create and edit modal component
 const ProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
   const [title, setTitle]           = useState('');
   const [description, setDescription] = useState('');
