@@ -24,6 +24,7 @@ const chatSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        //Add chat model for AI assistant message
         messages: [chatMessageSchema]
     },
     { timestamps: true }
