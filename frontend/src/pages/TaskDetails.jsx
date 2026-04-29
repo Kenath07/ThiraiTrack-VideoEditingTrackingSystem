@@ -5,6 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import StatusBadge from '../components/StatusBadge';
 import { ArrowLeft, Send, Link as LinkIcon } from 'lucide-react';
 
+// Task details page with workflow actions
 const TaskDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
