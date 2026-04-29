@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
+// Virtual field: 'name' maps to 'fullName' for frontend compatibility
 userSchema.virtual('name').get(function() {
     return this.fullName;
 });
