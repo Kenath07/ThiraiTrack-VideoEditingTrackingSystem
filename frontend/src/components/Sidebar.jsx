@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, CheckSquare, Folder, Users, Play } from 'lucide-react';
 
+// Navigation items with role-based access control
 const navItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['Project Manager', 'Video Editing Head', 'Full-Time Video Editor', 'Video Editing Intern'] },
   { name: 'Projects',  path: '/projects',  icon: Folder,          roles: ['Project Manager', 'Video Editing Head'] },
@@ -10,6 +11,7 @@ const navItems = [
   { name: 'Team',      path: '/team',      icon: Users,           roles: ['Project Manager', 'Video Editing Head'] },
 ];
 
+// Sidebar navigation for role-based dashboards
 const Sidebar = ({ role }) => (
   <div className="w-64 min-h-screen flex flex-col border-r border-slate-800" style={{ backgroundColor: 'oklch(0.13 0.04 265)' }}>
     {/* Logo */}
