@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Play, User, Mail, Lock, Phone, Briefcase, Award, FileText, ArrowLeft } from 'lucide-react';
 
 /* ── Shared Logo ── */
+// Registration page UI component
 function Logo() {
   return (
     <Link to="/" className="inline-flex items-center space-x-2.5 mb-4">
