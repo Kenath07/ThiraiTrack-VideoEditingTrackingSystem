@@ -15,6 +15,7 @@ const { authorizeRoles } = require('../middleware/roleMiddleware');
 
 router.use(protect);
 
+//Implement task management API endpoints
 router.get('/', getTasks);
 router.post('/', authorizeRoles('Video Editing Head'), createTask);
 
