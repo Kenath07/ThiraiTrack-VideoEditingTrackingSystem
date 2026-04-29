@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+// Protected route component for authenticated pages
 const ProtectedRoute = ({ children, allowedRoles }) => {
     const { user, loading } = useContext(AuthContext);
 
