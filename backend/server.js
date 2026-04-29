@@ -82,4 +82,14 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// When deployed to Vercel, the platform expects the server to export the app
+// and handle the listening itself. Only start the listener in non-production
+// (local development) environments to avoid conflicts.
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+// Export the Express app for serverless platforms (Vercel)
+// Project uses CommonJS modules (`type: commonjs` in package.json), so
+// use `module.exports = app`.
+module.exports = app;
