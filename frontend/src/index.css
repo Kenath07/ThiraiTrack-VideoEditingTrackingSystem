@@ -7,6 +7,7 @@
 
 /*
  * Design system definition.
+ * Frontend styling improvements
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
  * classes (e.g. --color-primary -> bg-primary, text-primary).
