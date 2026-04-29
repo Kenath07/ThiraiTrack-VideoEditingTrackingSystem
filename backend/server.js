@@ -46,7 +46,7 @@ app.post('/api/chat-test', protect, async (req, res) => {
     }
 });
 
-// Routes
+// Register all API routes
 try {
     app.use('/api/auth', require('./routes/authRoutes'));
     console.log('authRoutes loaded');
