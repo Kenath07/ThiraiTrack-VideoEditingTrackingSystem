@@ -301,6 +301,7 @@ The system follows a real-world video editing department workflow:
 
 *Add screenshots of the application here*
 
+## 🚀 Demo Coming Soon
 ## 🎥 Demo Video
 
 *Add demo video link here*
