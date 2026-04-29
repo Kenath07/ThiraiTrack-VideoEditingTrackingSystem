@@ -7,6 +7,7 @@ import TaskTable from '../components/TaskTable';
 import { CheckSquare, Clock, AlertCircle, Folder, CheckCircle } from 'lucide-react';
 
 /* ── Shared section heading ── */
+// Main dashboard route handler
 const SectionHeading = ({ children }) => (
   <h2 className="text-base font-bold text-foreground uppercase tracking-wide mb-4">{children}</h2>
 );
