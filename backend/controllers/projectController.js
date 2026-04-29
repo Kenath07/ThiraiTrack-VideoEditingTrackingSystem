@@ -22,15 +22,6 @@ exports.createProject = async (req, res) => {
     }
 };
 
-exports.getProjects = async (req, res) => {
-    try {
-        const projects = await Project.find().populate('createdBy', 'fullName email role');
-        res.status(200).json(projects);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
 exports.getProjectById = async (req, res) => {
     try {
         const project = await Project.findById(req.params.id).populate('createdBy', 'fullName email role');

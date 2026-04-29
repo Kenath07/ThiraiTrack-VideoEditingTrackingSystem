@@ -12,7 +12,6 @@ const { authorizeRoles } = require('../middleware/roleMiddleware');
 
 router.use(protect);
 
-router.get('/', getProjects);
 router.post('/', authorizeRoles('Project Manager', 'Video Editing Head'), createProject);
 
 router.get('/:id', getProjectById);
