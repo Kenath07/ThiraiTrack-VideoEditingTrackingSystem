@@ -19,7 +19,7 @@ const seedData = async () => {
     try {
         await connectDB();
 
-        // Clear existing data
+        // Clear existing data before seeding
         await User.deleteMany();
         await Project.deleteMany();
         await Task.deleteMany();
