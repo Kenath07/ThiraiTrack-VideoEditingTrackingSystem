@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Reusable dashboard statistic card component
 const StatCard = ({ title, value, icon: Icon, colorClass }) => (
   <div
     className="bg-card rounded-2xl border border-border p-6 flex items-center gap-4 hover:border-accent/40 hover:-translate-y-0.5 transition-all"
