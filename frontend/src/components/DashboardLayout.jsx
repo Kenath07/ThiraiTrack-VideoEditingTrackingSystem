@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import Chatbot from './Chatbot';
 import { AuthContext } from '../context/AuthContext';
 
+// Reusable dashboard layout with sidebar, navbar, and chatbot
 const DashboardLayout = () => {
   const { user } = useContext(AuthContext);
 
