@@ -229,6 +229,7 @@ VideoEditingTeam_TrackingSystem/
 
 ## 🌐 API Endpoints
 
+// RESTful API documentation
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
