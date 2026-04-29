@@ -36,11 +36,8 @@ export const AuthProvider = ({ children }) => {
             (response) => response,
             (error) => {
                 if (error.response?.status === 401) {
-                    const storedUser = localStorage.getItem('user');
-                    const userData = storedUser ? JSON.parse(storedUser) : null;
-                    const isPrivileged = ['Project Manager', 'Video Editing Head'].includes(userData?.role);
                     localStorage.removeItem('user');
-                    window.location.href = isPrivileged ? '/admin/login' : '/login';
+                    window.location.href = '/login';
                 }
                 return Promise.reject(error);
             }

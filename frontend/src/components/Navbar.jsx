@@ -11,17 +11,14 @@ const roleShort = {
   'Video Editing Intern':  'Intern',
 };
 
-const PRIVILEGED_ROLES = ['Project Manager', 'Video Editing Head'];
-
 // Dashboard navbar with user actions
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    const isPrivileged = PRIVILEGED_ROLES.includes(user?.role);
     logout();
-    navigate(isPrivileged ? '/admin/login' : '/login');
+    navigate('/login');
   };
 
   const getInitials = (name) => {

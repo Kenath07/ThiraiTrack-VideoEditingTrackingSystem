@@ -19,7 +19,8 @@ const Projects = () => {
   }, []);
 
   const handleProjectCreated = (newProject) => {
-    setProjects([{ ...newProject, createdBy: { fullName: user.name } }, ...projects]);
+    // Server now returns populated `createdBy`; use it directly
+    setProjects([newProject, ...projects]);
   };
 
   if (loading) return (

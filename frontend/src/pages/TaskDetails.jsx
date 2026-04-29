@@ -63,11 +63,17 @@ const TaskDetails = () => {
   if (error) return <div className="text-destructive p-4">{error}</div>;
   if (!task)  return <div className="text-muted-foreground p-4">Task not found</div>;
 
-  // Role-based status options — unchanged
+  // Role-based status options
   let availableStatuses = [];
-  if      (user?.role === 'Video Editing Head')     availableStatuses = ['Pending','In Progress','Under Review','Completed','Rejected'];
-  else if (user?.role === 'Full-Time Video Editor') availableStatuses = ['Pending','In Progress','Under Review'];
-  else if (user?.role === 'Video Editing Intern')   availableStatuses = ['Pending','In Progress','Under Review'];
+  if (user?.role === 'Video Editing Head') {
+    availableStatuses = ['Pending','In Progress','Under Review','Completed','Rejected'];
+  } else if (user?.role === 'Full-Time Video Editor') {
+    // Editors can change statuses but should NOT mark tasks as Completed here.
+    // Keep the review workflow: Pending, In Progress, Under Review
+    availableStatuses = ['Pending','In Progress','Under Review'];
+  } else if (user?.role === 'Video Editing Intern') {
+    availableStatuses = ['Pending','In Progress','Under Review'];
+  }
 
   const statusButtonCls = (status) => {
     if (task.status === status)

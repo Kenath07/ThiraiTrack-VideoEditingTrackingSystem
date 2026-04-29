@@ -39,6 +39,12 @@ const Register = () => {
     experienceLevel: 'Beginner',
     primarySkill: 'Video Editing',
     bio: '',
+    // Role-specific fields
+    department: '',
+    yearsOfExperience: '',
+    managedProjectsCount: '',
+    specialization: '',
+    teamSizeManaged: '',
   });
   const [error, setError]     = useState('');
   const [success, setSuccess] = useState('');
@@ -63,6 +69,12 @@ const Register = () => {
       experienceLevel: formData.experienceLevel,
       primarySkill:    formData.primarySkill,
       bio:             formData.bio.trim(),
+      // Role-specific fields
+      department:           formData.department.trim(),
+      yearsOfExperience:    formData.yearsOfExperience.trim(),
+      managedProjectsCount: formData.managedProjectsCount.trim(),
+      specialization:       formData.specialization.trim(),
+      teamSizeManaged:      formData.teamSizeManaged.trim(),
     };
 
     if (!trimmed.fullName)        { setError('Full Name is required');            setLoading(false); return; }
@@ -73,6 +85,18 @@ const Register = () => {
     if (trimmed.password.length < 6) { setError('Password must be at least 6 characters'); setLoading(false); return; }
     if (!trimmed.phone)           { setError('Phone Number is required');         setLoading(false); return; }
     if (!trimmed.bio)             { setError('Short Bio is required');            setLoading(false); return; }
+
+    // Role-specific validation
+    if (trimmed.role === 'Project Manager') {
+      if (!trimmed.department) { setError('Department/Team Name is required for Project Manager'); setLoading(false); return; }
+      if (!trimmed.yearsOfExperience) { setError('Years of Experience is required for Project Manager'); setLoading(false); return; }
+      if (!trimmed.managedProjectsCount) { setError('Managed Projects Count is required for Project Manager'); setLoading(false); return; }
+    }
+    if (trimmed.role === 'Video Editing Head') {
+      if (!trimmed.specialization) { setError('Specialization is required for Video Editing Head'); setLoading(false); return; }
+      if (!trimmed.yearsOfExperience) { setError('Years of Experience is required for Video Editing Head'); setLoading(false); return; }
+      if (!trimmed.teamSizeManaged) { setError('Team Size Managed is required for Video Editing Head'); setLoading(false); return; }
+    }
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
@@ -109,7 +133,7 @@ const Register = () => {
         <div className="text-center mb-8">
           <Logo />
           <h1 className="text-3xl font-bold text-foreground mb-2">Create Account</h1>
-          <p className="text-muted-foreground">Register as Intern or Video Editor</p>
+          <p className="text-muted-foreground">Register as a team member</p>
         </div>
 
         {/* Card */}
@@ -131,7 +155,7 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Full Name *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Full Name <span className="text-destructive">*</span></label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="John Doe" className={inputCls} />
@@ -140,7 +164,7 @@ const Register = () => {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Email *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Email <span className="text-destructive">*</span></label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="john@example.com" className={inputCls} />
@@ -150,14 +174,14 @@ const Register = () => {
             {/* Password row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Password *</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Password <span className="text-destructive">*</span></label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input type="password" name="password" value={formData.password} onChange={handleChange} required minLength="6" placeholder="••••••••" className={inputCls} />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Confirm Password *</label>
+                <label className="block text-sm font-medium text-foreground mb-2">Confirm Password <span className="text-destructive">*</span></label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required minLength="6" placeholder="••••••••" className={inputCls} />
@@ -167,19 +191,21 @@ const Register = () => {
 
             {/* Role */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Role *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Role <span className="text-destructive">*</span></label>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <select name="role" value={formData.role} onChange={handleChange} required className={`${inputCls} appearance-none cursor-pointer`}>
-                  <option value="Video Editing Intern">Video Editing Intern</option>
+                  <option value="Project Manager">Project Manager</option>
+                  <option value="Video Editing Head">Video Editing Head</option>
                   <option value="Full-Time Video Editor">Full-Time Video Editor</option>
+                  <option value="Video Editing Intern">Video Editing Intern</option>
                 </select>
               </div>
             </div>
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Phone Number *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Phone Number <span className="text-destructive">*</span></label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="0771234567" className={inputCls} />
@@ -188,7 +214,7 @@ const Register = () => {
 
             {/* Experience Level */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Experience Level *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Experience Level <span className="text-destructive">*</span></label>
               <div className="relative">
                 <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <select name="experienceLevel" value={formData.experienceLevel} onChange={handleChange} required className={`${inputCls} appearance-none cursor-pointer`}>
@@ -201,7 +227,7 @@ const Register = () => {
 
             {/* Primary Skill */}
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Primary Skill *</label>
+              <label className="block text-sm font-medium text-foreground mb-2">Primary Skill <span className="text-destructive">*</span></label>
               <div className="relative">
                 <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <select name="primarySkill" value={formData.primarySkill} onChange={handleChange} required className={`${inputCls} appearance-none cursor-pointer`}>
@@ -217,7 +243,7 @@ const Register = () => {
             {/* Bio */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Short Bio (if you have portfolio add that) *
+                Short Bio (if you have portfolio add that) <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <FileText className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
@@ -232,6 +258,72 @@ const Register = () => {
                 />
               </div>
             </div>
+
+            {/* Role-Specific Fields */}
+            {formData.role === 'Project Manager' && (
+              <>
+                <div className="border-t border-border pt-5 mt-2">
+                  <h3 className="text-sm font-semibold text-foreground mb-4">Project Manager Details</h3>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Department / Team Name *</label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input type="text" name="department" value={formData.department} onChange={handleChange} required placeholder="e.g., Creative Production Team" className={inputCls} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Years of Experience *</label>
+                  <div className="relative">
+                    <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input type="number" name="yearsOfExperience" value={formData.yearsOfExperience} onChange={handleChange} required placeholder="e.g., 5" min="0" className={inputCls} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Managed Projects Count *</label>
+                  <div className="relative">
+                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input type="number" name="managedProjectsCount" value={formData.managedProjectsCount} onChange={handleChange} required placeholder="e.g., 25" min="0" className={inputCls} />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {formData.role === 'Video Editing Head' && (
+              <>
+                <div className="border-t border-border pt-5 mt-2">
+                  <h3 className="text-sm font-semibold text-foreground mb-4">Video Editing Head Details</h3>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Specialization *</label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <select name="specialization" value={formData.specialization} onChange={handleChange} required className={`${inputCls} appearance-none cursor-pointer`}>
+                      <option value="">Select Specialization</option>
+                      <option value="Video Editing">Video Editing</option>
+                      <option value="Color Grading">Color Grading</option>
+                      <option value="Motion Graphics">Motion Graphics</option>
+                      <option value="Sound Design">Sound Design</option>
+                      <option value="All-Around">All-Around</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Years of Experience *</label>
+                  <div className="relative">
+                    <Award className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input type="number" name="yearsOfExperience" value={formData.yearsOfExperience} onChange={handleChange} required placeholder="e.g., 8" min="0" className={inputCls} />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Team Size Managed *</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <input type="number" name="teamSizeManaged" value={formData.teamSizeManaged} onChange={handleChange} required placeholder="e.g., 10" min="1" className={inputCls} />
+                  </div>
+                </div>
+              </>
+            )}
 
             <button
               type="submit"

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
@@ -26,6 +26,22 @@ const Dashboard = () => {
   const [tasks, setTasks]     = useState([]);
   const [projects, setProjects] = useState([]);
   const [team, setTeam]       = useState([]);
+
+  // Memoize derived task/project/team calculations to avoid repeated filters on render
+  const myTasksMemo = useMemo(() => tasks.filter(t => t.assignedTo?._id === user?._id), [tasks, user?._id]);
+  const internSubmissionsMemo = useMemo(() =>
+    tasks.filter(t => t.status === 'Under Review' && t.assignedTo?.role === 'Video Editing Intern'),
+    [tasks]
+  );
+  const approvalQueueMemo = useMemo(() => tasks.filter(t => t.status === 'Under Review'), [tasks]);
+  const activeTasksCount = useMemo(() => tasks.filter(t => t.status === 'In Progress' || t.status === 'Pending').length, [tasks]);
+  const completedTasksCount = useMemo(() => tasks.filter(t => t.status === 'Completed').length, [tasks]);
+  const teamPerformanceMemo = useMemo(() => team.map(member => {
+    const memberTasks = tasks.filter(t => t.assignedTo?._id === member._id);
+    const completed = memberTasks.filter(t => t.status === 'Completed').length;
+    const completionRate = memberTasks.length ? Math.round((completed / memberTasks.length) * 100) : 0;
+    return { ...member, totalTasks: memberTasks.length, completedTasks: completed, completionRate };
+  }), [team, tasks]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -69,6 +85,7 @@ const Dashboard = () => {
     const pending    = tasks.filter(t => t.status === 'Pending').length;
     const inProgress = tasks.filter(t => t.status === 'In Progress').length;
     const underReview= tasks.filter(t => t.status === 'Under Review').length;
+    const completed  = tasks.filter(t => t.status === 'Completed').length;
 
     return (
       <div className="space-y-8">
@@ -76,10 +93,11 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-foreground">Intern Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">Welcome back, {user.name}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           <StatCard title="Pending Tasks"  value={pending}     icon={Clock}       colorClass="bg-muted-foreground/80" />
           <StatCard title="In Progress"    value={inProgress}  icon={AlertCircle} colorClass="bg-blue-500"           />
           <StatCard title="Under Review"   value={underReview} icon={CheckSquare} colorClass="bg-yellow-500"         />
+          <StatCard title="Completed"      value={completed}   icon={CheckCircle} colorClass="bg-green-500"         />
         </div>
         <div>
           <SectionHeading>My Assigned Tasks</SectionHeading>

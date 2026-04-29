@@ -16,7 +16,10 @@ exports.createProject = async (req, res) => {
             createdBy: req.user._id
         });
 
-        res.status(201).json(project);
+        // Populate createdBy for a consistent client response
+        const populatedProject = await Project.findById(project._id).populate('createdBy', 'fullName email role');
+
+        res.status(201).json(populatedProject);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

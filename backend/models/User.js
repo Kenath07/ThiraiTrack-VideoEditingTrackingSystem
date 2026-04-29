@@ -36,6 +36,25 @@ const userSchema = new mongoose.Schema({
     bio: {
         type: String,
         required: true
+    },
+    // Role-specific optional fields
+    // Project Manager fields
+    department: {
+        type: String
+    },
+    yearsOfExperience: {
+        type: Number
+    },
+    managedProjectsCount: {
+        type: Number
+    },
+    // Video Editing Head fields
+    specialization: {
+        type: String,
+        enum: ['Video Editing', 'Color Grading', 'Motion Graphics', 'Sound Design', 'All-Around']
+    },
+    teamSizeManaged: {
+        type: Number
     }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 

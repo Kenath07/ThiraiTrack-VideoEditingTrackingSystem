@@ -6,7 +6,6 @@ import DashboardLayout from './components/DashboardLayout';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
 
 // Configure application routing
@@ -24,7 +23,6 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           
           <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />

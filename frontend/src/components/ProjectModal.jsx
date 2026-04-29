@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { X } from 'lucide-react';
 import api from '../api/axios';
+import { AuthContext } from '../context/AuthContext';
 
 const fieldCls =
   'w-full bg-secondary/40 border border-border rounded-xl p-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors';
@@ -13,20 +14,76 @@ const ProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
   const [status, setStatus]         = useState('Planning');
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState('');
+  const { user } = useContext(AuthContext);
+  const [serverRole, setServerRole] = React.useState(null);
+
+  // For debugging: log current role when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      console.log('[ProjectModal] opened. current user from context:', user);
+    }
+  }, [isOpen]);
+
+  // Fetch server-side role when modal opens so we can display it
+  React.useEffect(() => {
+    let cancelled = false;
+    const fetchServerRole = async () => {
+      if (!isOpen) return;
+      try {
+        const res = await api.get('/api/auth/me');
+        if (!cancelled) setServerRole(res.data?.role || null);
+      } catch (err) {
+        console.error('[ProjectModal] failed to fetch server role:', err);
+        if (!cancelled) setServerRole(null);
+      }
+    };
+    fetchServerRole();
+    return () => { cancelled = true; };
+  }, [isOpen]);
 
   if (!isOpen) return null;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    // Refresh server-side user to ensure role is up-to-date
+    try {
+      const meRes = await api.get('/api/auth/me');
+      const serverRole = meRes.data?.role;
+      if (serverRole !== 'Project Manager') {
+        setError(`You are not authorized to create projects. Your role: ${serverRole || 'unknown'}`);
+        setLoading(false);
+        return;
+      }
+    } catch (meErr) {
+      console.error('[ProjectModal] failed to refresh current user:', meErr);
+      // If the /me call fails, fall back to client-side role check
+      if (user?.role !== 'Project Manager') {
+        setError(`You are not authorized to create projects. Your role: ${user?.role || 'unknown'}`);
+        setLoading(false);
+        return;
+      }
+    }
     try {
       const response = await api.post('/api/projects', { title, description, deadline, status });
       onProjectCreated(response.data);
       setTitle(''); setDescription(''); setDeadline(''); setStatus('Planning');
       onClose();
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating project');
+      // Map 403 to friendlier message
+      if (err.response) {
+        const status = err.response.status;
+        const serverMsg = err.response.data?.message || err.response.data?.error || JSON.stringify(err.response.data);
+        if (status === 403) {
+          setError(`You do not have permission to create projects. Server: ${serverMsg}`);
+        } else {
+          setError(serverMsg || 'Error creating project');
+        }
+      } else {
+        setError(err.message || 'Error creating project');
+      }
     } finally {
       setLoading(false);
     }

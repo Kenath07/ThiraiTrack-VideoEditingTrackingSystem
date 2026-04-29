@@ -4,8 +4,6 @@ A production-ready MERN stack application for managing video editing teams, task
 
 ## 📋 Project Description
 
-// Role credentials and workflow overview
-
 ThiraiTrack is a comprehensive task and project management system designed specifically for video editing teams. It enables seamless collaboration between interns, full-time editors, team heads, and project managers through role-based dashboards and workflows.
 
 ## ✨ Features
@@ -72,14 +70,19 @@ ThiraiTrack is a comprehensive task and project management system designed speci
 
 ## 👥 Role Credentials
 
-Use the following credentials to test different roles:
+All team members register and login through the same interface:
 
-| Role | Email | Password |
-|------|-------|----------|
-| Project Manager | manager@thiraiterra.com | [Set during registration] |
-| Video Editing Head | head@thiraiterra.com | [Set during registration] |
-| Full-Time Video Editor | editor@thiraiterra.com | [Set during registration] |
-| Video Editing Intern | intern@thiraiterra.com | [Set during registration] |
+1. Navigate to `/register` to create an account
+2. Select your role from the dropdown:
+   - Project Manager
+   - Video Editing Head
+   - Full-Time Video Editor
+   - Video Editing Intern
+3. Complete the registration form with your details
+4. Login at `/login` with your credentials
+
+### Test Account Creation
+You can create test accounts for each role by registering with different email addresses and selecting the appropriate role during registration.
 
 ## 🚀 Local Setup Instructions
 
@@ -206,17 +209,14 @@ VideoEditingTeam_TrackingSystem/
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx # Authentication context
 │   │   ├── pages/
+│   │   │   ├── LandingPage.jsx
 │   │   │   ├── Login.jsx
 │   │   │   ├── Register.jsx
 │   │   │   ├── Dashboard.jsx
-│   │   │   ├── InternDashboard.jsx
-│   │   │   ├── EditorDashboard.jsx
-│   │   │   ├── HeadDashboard.jsx
-│   │   │   ├── ManagerDashboard.jsx
 │   │   │   ├── Tasks.jsx
-│   │   │   ├── Projects.jsx
 │   │   │   ├── TaskDetails.jsx
-│   │   │   └── Users.jsx
+│   │   │   ├── Projects.jsx
+│   │   │   └── Team.jsx
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
