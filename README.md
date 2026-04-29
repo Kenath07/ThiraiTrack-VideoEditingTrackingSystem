@@ -281,8 +281,9 @@ The system follows a real-world video editing department workflow:
    - Views team performance metrics
    - Tracks project completion rates
 
-## �� Deployment
+## 🚀 Deployment
 
+// Production deployment guide
 ### Frontend (Netlify)
 1. Build the frontend: `cd frontend && npm run build`
 2. Deploy the `dist` folder to Netlify
