@@ -61,6 +61,7 @@ const getUserContext = async (userId) => {
     }
 };
 
+//Implement AI chatbot backend routes
 // ---------- Format Context into AI-Readable String ----------
 const formatContextForAI = (data) => {
     const { user, assignedTasks, createdTasks, projects, teamMembers } = data;
@@ -105,6 +106,7 @@ const formatContextForAI = (data) => {
         });
     }
 
+   
     // Created/managed tasks (for Head/Manager)
     if (createdTasks.length > 0) {
         context += `\n--- TASKS YOU ASSIGNED TO OTHERS (${createdTasks.length}) ---\n`;
