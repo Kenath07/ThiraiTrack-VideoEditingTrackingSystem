@@ -6,7 +6,7 @@ const projectSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: String,
+        type: Number,
         required: true
     },
     deadline: {
