@@ -5,6 +5,7 @@ import StatusBadge from '../components/StatusBadge';
 import ProjectModal from '../components/ProjectModal';
 import { Plus, Calendar, User } from 'lucide-react';
 
+// Projects page with CRUD interface
 const Projects = () => {
   const [projects, setProjects]     = useState([]);
   const [loading, setLoading]       = useState(true);
