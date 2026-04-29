@@ -35,6 +35,7 @@ const taskSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    //Add task model with workflow status
     status: {
         type: String,
         enum: ['Pending', 'In Progress', 'Under Review', 'Completed', 'Rejected'],
