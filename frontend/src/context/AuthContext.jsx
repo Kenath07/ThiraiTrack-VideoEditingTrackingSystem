@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import api from '../api/axios';
 
+// Authentication context for managing user sessions
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
