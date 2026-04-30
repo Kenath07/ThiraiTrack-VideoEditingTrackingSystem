@@ -32,7 +32,7 @@ const Projects = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Projects</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage all video projects</p>
@@ -40,7 +40,7 @@ const Projects = () => {
         {user?.role === 'Project Manager' && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 hover:-translate-y-0.5"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
             style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-button)' }}
           >
             <Plus size={16} />
@@ -67,21 +67,21 @@ const Projects = () => {
               <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-1">{project.description}</p>
 
               <div className="border-t border-border pt-4 space-y-2">
-                <div className="flex items-center justify-between text-xs">
+                <div className="flex items-start justify-between gap-3 text-xs">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <Calendar size={12} />
                     Deadline
                   </span>
-                  <span className={`font-semibold ${isOverdue ? 'text-destructive' : 'text-foreground'}`}>
+                  <span className={`text-right font-semibold ${isOverdue ? 'text-destructive' : 'text-foreground'}`}>
                     {new Date(project.deadline).toLocaleDateString()}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs">
+                <div className="flex items-start justify-between gap-3 text-xs">
                   <span className="flex items-center gap-1.5 text-muted-foreground">
                     <User size={12} />
                     Created by
                   </span>
-                  <span className="font-semibold text-foreground">{project.createdBy?.fullName || 'N/A'}</span>
+                  <span className="break-words text-right font-semibold text-foreground">{project.createdBy?.fullName || 'N/A'}</span>
                 </div>
               </div>
             </div>

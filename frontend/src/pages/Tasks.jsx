@@ -41,7 +41,7 @@ const Tasks = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
             {isMyTasks ? 'My Assigned Tasks' : 'All Tasks'}
@@ -51,7 +51,7 @@ const Tasks = () => {
         {user?.role === 'Video Editing Head' && !isMyTasks && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 hover:-translate-y-0.5"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
             style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-button)' }}
           >
             <Plus size={16} />

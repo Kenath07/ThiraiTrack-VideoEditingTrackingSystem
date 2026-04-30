@@ -5,16 +5,15 @@ import { AuthContext } from '../context/AuthContext';
 import StatusBadge from '../components/StatusBadge';
 import { ArrowLeft, Send, Link as LinkIcon } from 'lucide-react';
 
-// Task details page with workflow actions
 const TaskDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const [task, setTask]             = useState(null);
-  const [loading, setLoading]       = useState(true);
+  const [task, setTask] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
-  const [driveLink, setDriveLink]   = useState('');
-  const [error, setError]           = useState('');
+  const [driveLink, setDriveLink] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => { fetchTaskDetails(); }, [id]);
 
@@ -45,7 +44,7 @@ const TaskDetails = () => {
     try {
       const response = await api.post(`/api/tasks/${id}/comments`, {
         text: commentText,
-        driveLink: driveLink,
+        driveLink,
       });
       setTask(response.data);
       setCommentText('');
@@ -55,104 +54,96 @@ const TaskDetails = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-40 text-muted-foreground text-sm animate-pulse">
-      Loading task details…
-    </div>
-  );
-  if (error) return <div className="text-destructive p-4">{error}</div>;
-  if (!task)  return <div className="text-muted-foreground p-4">Task not found</div>;
+  if (loading) {
+    return <div className="flex h-40 items-center justify-center text-sm text-muted-foreground animate-pulse">Loading task details...</div>;
+  }
+  if (error) return <div className="p-4 text-destructive">{error}</div>;
+  if (!task) return <div className="p-4 text-muted-foreground">Task not found</div>;
 
-  // Role-based status options
   let availableStatuses = [];
   if (user?.role === 'Video Editing Head') {
-    availableStatuses = ['Pending','In Progress','Under Review','Completed','Rejected'];
-  } else if (user?.role === 'Full-Time Video Editor') {
-    // Editors can change statuses but should NOT mark tasks as Completed here.
-    // Keep the review workflow: Pending, In Progress, Under Review
-    availableStatuses = ['Pending','In Progress','Under Review'];
-  } else if (user?.role === 'Video Editing Intern') {
-    availableStatuses = ['Pending','In Progress','Under Review'];
+    availableStatuses = ['Pending', 'In Progress', 'Under Review', 'Completed', 'Rejected'];
+  } else if (user?.role === 'Full-Time Video Editor' || user?.role === 'Video Editing Intern') {
+    availableStatuses = ['Pending', 'In Progress', 'Under Review'];
   }
 
   const statusButtonCls = (status) => {
-    if (task.status === status)
-      return 'bg-secondary text-muted-foreground cursor-not-allowed border border-border opacity-60';
+    if (task.status === status) {
+      return 'cursor-not-allowed border border-border bg-secondary text-muted-foreground opacity-60';
+    }
     const map = {
-      'Pending':     'bg-secondary hover:bg-muted text-foreground border border-border',
-      'In Progress': 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200',
-      'Under Review':'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border border-yellow-200',
-      'Completed':   'bg-green-50 hover:bg-green-100 text-green-700 border border-green-200',
-      'Rejected':    'bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20',
+      Pending: 'border border-border bg-secondary text-foreground hover:bg-muted',
+      'In Progress': 'border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100',
+      'Under Review': 'border border-yellow-200 bg-yellow-50 text-yellow-700 hover:bg-yellow-100',
+      Completed: 'border border-green-200 bg-green-50 text-green-700 hover:bg-green-100',
+      Rejected: 'border border-destructive/20 bg-destructive/10 text-destructive hover:bg-destructive/20',
     };
-    return map[status] ?? 'bg-card border border-border';
+    return map[status] ?? 'border border-border bg-card';
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Back */}
+    <div className="mx-auto max-w-4xl space-y-6">
       <button
         onClick={() => navigate(-1)}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-accent transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-accent"
       >
         <ArrowLeft size={16} />
         Back
       </button>
 
-      {/* Task info card */}
-      <div className="bg-card border border-border rounded-2xl p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-        <div className="flex justify-between items-start mb-6">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{task.title}</h1>
-            <p className="text-sm text-muted-foreground mt-1">Project: {task.project?.title}</p>
+            <h1 className="break-words text-2xl font-bold text-foreground">{task.title}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Project: {task.project?.title}</p>
           </div>
           <StatusBadge status={task.status} />
         </div>
 
-        <div className="grid grid-cols-2 gap-5 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
           {[
             { label: 'Assigned To', value: task.assignedTo?.name || 'Unassigned' },
-            { label: 'Deadline',    value: new Date(task.deadline).toLocaleDateString() },
-            { label: 'Priority',    value: task.priority },
-            { label: 'Created By',  value: task.createdBy?.name },
+            { label: 'Deadline', value: new Date(task.deadline).toLocaleDateString() },
+            { label: 'Priority', value: task.priority },
+            { label: 'Created By', value: task.createdBy?.name },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-secondary/40 rounded-xl p-4">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{label}</p>
-              <p className="text-sm font-semibold text-foreground">{value}</p>
+            <div key={label} className="rounded-xl bg-secondary/40 p-4">
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+              <p className="break-words text-sm font-semibold text-foreground">{value}</p>
             </div>
           ))}
         </div>
 
         <div className="mb-6">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Description</p>
-          <p className="text-sm text-foreground bg-secondary/40 p-4 rounded-xl leading-relaxed">{task.description}</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Description</p>
+          <p className="rounded-xl bg-secondary/40 p-4 text-sm leading-relaxed text-foreground">{task.description}</p>
         </div>
 
         {task.driveLink && (
           <div className="mb-6">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Drive / Draft Link</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Drive / Draft Link</p>
             <a
               href={task.driveLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary hover:text-accent text-sm font-medium transition-colors"
+              className="inline-flex items-start gap-2 break-all text-sm font-medium text-primary transition-colors hover:text-accent"
             >
-              <LinkIcon size={14} />
-              {task.driveLink}
+              <LinkIcon size={14} className="mt-0.5 flex-shrink-0" />
+              <span className="break-all">{task.driveLink}</span>
             </a>
           </div>
         )}
 
         {availableStatuses.length > 0 && (
           <div className="border-t border-border pt-6">
-            <h3 className="text-sm font-bold text-foreground uppercase tracking-wide mb-3">Update Status</h3>
+            <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-foreground">Update Status</h3>
             <div className="flex flex-wrap gap-2">
-              {availableStatuses.map(status => (
+              {availableStatuses.map((status) => (
                 <button
                   key={status}
                   onClick={() => handleStatusChange(status)}
                   disabled={task.status === status}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${statusButtonCls(status)}`}
+                  className={`rounded-xl px-4 py-2 text-xs font-semibold transition-all ${statusButtonCls(status)}`}
                 >
                   Set to {status}
                 </button>
@@ -162,21 +153,20 @@ const TaskDetails = () => {
         )}
       </div>
 
-      {/* Comments card */}
-      <div className="bg-card border border-border rounded-2xl p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
-        <h3 className="text-lg font-bold text-foreground mb-5">Comments &amp; Updates</h3>
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <h3 className="mb-5 text-lg font-bold text-foreground">Comments &amp; Updates</h3>
 
-        <div className="space-y-3 mb-6">
+        <div className="mb-6 space-y-3">
           {task.comments?.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No comments yet.</p>
+            <p className="text-sm text-muted-foreground">No comments yet.</p>
           ) : (
             task.comments?.map((comment, index) => (
-              <div key={index} className="bg-secondary/40 p-4 rounded-xl">
-                <div className="flex justify-between text-xs mb-1">
+              <div key={index} className="rounded-xl bg-secondary/40 p-4">
+                <div className="mb-1 flex flex-col gap-1 text-xs sm:flex-row sm:items-center sm:justify-between">
                   <span className="font-bold text-foreground">{comment.user?.name}</span>
                   <span className="text-muted-foreground">{new Date(comment.createdAt).toLocaleString()}</span>
                 </div>
-                <p className="text-sm text-foreground">{comment.text}</p>
+                <p className="break-words text-sm text-foreground">{comment.text}</p>
               </div>
             ))
           )}
@@ -184,34 +174,34 @@ const TaskDetails = () => {
 
         <form onSubmit={handleAddComment} className="space-y-4 border-t border-border pt-5">
           <div>
-            <label className="block text-xs font-semibold text-foreground uppercase tracking-wide mb-2">Add Comment</label>
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-foreground">Add Comment</label>
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              className="w-full bg-secondary/40 border border-border rounded-xl p-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors resize-none"
+              className="w-full rounded-xl border border-border bg-secondary/40 p-3 text-sm text-foreground placeholder-muted-foreground transition-colors focus:border-primary focus:outline-none resize-none"
               rows="3"
-              placeholder="Type your message here…"
+              placeholder="Type your message here..."
             />
           </div>
 
           {['Video Editing Intern', 'Full-Time Video Editor'].includes(user?.role) && (
             <div>
-              <label className="block text-xs font-semibold text-foreground uppercase tracking-wide mb-2">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-foreground">
                 Google Drive / Draft Link (Optional)
               </label>
               <input
                 type="url"
                 value={driveLink}
                 onChange={(e) => setDriveLink(e.target.value)}
-                className="w-full bg-secondary/40 border border-border rounded-xl p-3 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary transition-colors"
-                placeholder="https://drive.google.com/…"
+                className="w-full rounded-xl border border-border bg-secondary/40 p-3 text-sm text-foreground placeholder-muted-foreground transition-colors focus:border-primary focus:outline-none"
+                placeholder="https://drive.google.com/..."
               />
             </div>
           )}
 
           <button
             type="submit"
-            className="inline-flex items-center gap-2 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90"
             style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-button)' }}
           >
             <Send size={14} />

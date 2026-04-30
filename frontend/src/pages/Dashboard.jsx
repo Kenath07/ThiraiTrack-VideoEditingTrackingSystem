@@ -142,14 +142,14 @@ const Dashboard = () => {
 
     return (
       <div className="space-y-8">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Head Dashboard</h1>
             <p className="text-sm text-muted-foreground mt-1">Welcome back, {user.name}</p>
           </div>
           <button
             onClick={() => navigate('/tasks')}
-            className="inline-flex items-center gap-2 text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:opacity-90 hover:-translate-y-0.5"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
             style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-button)' }}
           >
             Manage All Tasks
@@ -252,42 +252,74 @@ const Dashboard = () => {
 
         <div>
           <SectionHeading>Team Performance Overview</SectionHeading>
-          <div className="bg-card rounded-2xl border border-border overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
-            <table className="min-w-full divide-y divide-border">
-              <thead>
-                <tr className="bg-secondary/60">
-                  {['Member','Role','Total Tasks','Completed','Completion Rate'].map((h, i) => (
-                    <th
-                      key={h}
-                      className={`px-6 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider ${i >= 2 ? 'text-center' : 'text-left'} ${i === 4 ? 'text-right' : ''}`}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {teamPerformance.map(member => (
-                  <tr key={member._id} className="hover:bg-accent/5 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-foreground">{member.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{member.role}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-foreground">{member.totalTasks}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600 font-semibold">{member.completedTasks}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                      <div className="flex items-center justify-end gap-3">
-                        <span className="font-semibold text-foreground">{member.completionRate}%</span>
-                        <div className="w-20 bg-secondary rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full transition-all"
-                            style={{ width: `${member.completionRate}%`, background: 'var(--gradient-hero)' }}
-                          />
-                        </div>
-                      </div>
-                    </td>
+          <div className="space-y-4 md:hidden">
+            {teamPerformance.map(member => (
+              <div key={member._id} className="rounded-2xl border border-border bg-card p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-foreground">{member.name}</p>
+                    <p className="text-xs text-muted-foreground">{member.role}</p>
+                  </div>
+                  <span className="text-sm font-semibold text-foreground">{member.completionRate}%</span>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-xl bg-secondary/40 p-3">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Total Tasks</p>
+                    <p className="mt-1 font-semibold text-foreground">{member.totalTasks}</p>
+                  </div>
+                  <div className="rounded-xl bg-secondary/40 p-3">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Completed</p>
+                    <p className="mt-1 font-semibold text-green-600">{member.completedTasks}</p>
+                  </div>
+                </div>
+                <div className="mt-3 h-2 rounded-full bg-secondary">
+                  <div
+                    className="h-2 rounded-full transition-all"
+                    style={{ width: `${member.completionRate}%`, background: 'var(--gradient-hero)' }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden overflow-hidden rounded-2xl border border-border bg-card md:block" style={{ boxShadow: 'var(--shadow-card)' }}>
+            <div className="overflow-x-auto">
+              <table className="min-w-[720px] w-full divide-y divide-border">
+                <thead>
+                  <tr className="bg-secondary/60">
+                    {['Member','Role','Total Tasks','Completed','Completion Rate'].map((h, i) => (
+                      <th
+                        key={h}
+                        className={`px-6 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider ${i >= 2 ? 'text-center' : 'text-left'} ${i === 4 ? 'text-right' : ''}`}
+                      >
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {teamPerformance.map(member => (
+                    <tr key={member._id} className="hover:bg-accent/5 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-foreground">{member.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{member.role}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-foreground">{member.totalTasks}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-green-600 font-semibold">{member.completedTasks}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                        <div className="flex items-center justify-end gap-3">
+                          <span className="font-semibold text-foreground">{member.completionRate}%</span>
+                          <div className="w-20 bg-secondary rounded-full h-2">
+                            <div
+                              className="h-2 rounded-full transition-all"
+                              style={{ width: `${member.completionRate}%`, background: 'var(--gradient-hero)' }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
