@@ -5,6 +5,8 @@ import api from '../api/axios';
 const fieldCls =
   'w-full rounded-xl border border-border bg-secondary/40 p-3 text-sm text-foreground placeholder-muted-foreground transition-colors focus:border-primary focus:outline-none';
 
+const getEntityId = (entity) => entity?._id || entity?.id || '';
+
 const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -15,24 +17,50 @@ const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
   const [team, setTeam] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingOptions, setLoadingOptions] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (isOpen) fetchFormData();
+    if (!isOpen) return;
+    fetchFormData();
   }, [isOpen]);
 
   const fetchFormData = async () => {
+    setLoadingOptions(true);
+    setError('');
+
     try {
       const [teamRes, projRes] = await Promise.all([
         api.get('/api/users/team'),
         api.get('/api/projects'),
       ]);
-      setTeam(teamRes.data);
-      setProjects(projRes.data.filter((p) => p.status !== 'Completed'));
-      if (teamRes.data.length > 0) setAssignedTo(teamRes.data[0]._id);
-      if (projRes.data.length > 0) setProject(projRes.data[0]._id);
+
+      const assignableMembers = teamRes.data.filter((member) =>
+        ['Video Editing Intern', 'Full-Time Video Editor'].includes(member.role)
+      );
+      const availableProjects = projRes.data.filter((item) => item.status !== 'Completed');
+
+      setTeam(assignableMembers);
+      setProjects(availableProjects);
+
+      const firstMemberId = getEntityId(assignableMembers[0]);
+      const firstProjectId = getEntityId(availableProjects[0]);
+
+      setAssignedTo((current) =>
+        assignableMembers.some((member) => getEntityId(member) === current) ? current : firstMemberId
+      );
+      setProject((current) =>
+        availableProjects.some((item) => getEntityId(item) === current) ? current : firstProjectId
+      );
     } catch (err) {
       console.error('Error fetching form data', err);
+      setTeam([]);
+      setProjects([]);
+      setAssignedTo('');
+      setProject('');
+      setError(err.response?.data?.message || 'Unable to load projects or team members.');
+    } finally {
+      setLoadingOptions(false);
     }
   };
 
@@ -42,8 +70,28 @@ const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    if (!project) {
+      setError('No active project found. Ask the Project Manager to create a project first.');
+      setLoading(false);
+      return;
+    }
+
+    if (!assignedTo) {
+      setError('No assignable team member found. Ask an Intern or Full-Time Video Editor to register first.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await api.post('/api/tasks', { title, description, assignedTo, project, deadline, priority });
+      const response = await api.post('/api/tasks', {
+        title,
+        description,
+        assignedTo,
+        project,
+        deadline,
+        priority,
+      });
       onTaskCreated(response.data);
       setTitle('');
       setDescription('');
@@ -60,6 +108,7 @@ const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
   };
 
   const today = new Date().toISOString().split('T')[0];
+  const disableSubmit = loading || loadingOptions || projects.length === 0 || team.length === 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
@@ -94,20 +143,60 @@ const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">Project</label>
-              <select required value={project} onChange={(e) => setProject(e.target.value)} className={`${fieldCls} appearance-none cursor-pointer`}>
-                {projects.map((p) => <option key={p._id} value={p._id}>{p.title}</option>)}
+              <select
+                required
+                value={project}
+                onChange={(e) => setProject(e.target.value)}
+                className={`${fieldCls} appearance-none cursor-pointer`}
+                disabled={loadingOptions || projects.length === 0}
+              >
+                {loadingOptions && <option value="">Loading projects...</option>}
+                {!loadingOptions && projects.length === 0 && <option value="">No active projects available</option>}
+                {!loadingOptions && projects.map((item) => (
+                  <option key={getEntityId(item)} value={getEntityId(item)}>
+                    {item.title}
+                  </option>
+                ))}
               </select>
+              {!loadingOptions && projects.length === 0 && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  A Project Manager must create a project before tasks can be assigned.
+                </p>
+              )}
             </div>
+
             <div>
               <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">Assign To</label>
-              <select required value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className={`${fieldCls} appearance-none cursor-pointer`}>
-                {team.map((member) => {
-                  const short = member.role === 'Video Editing Intern' ? 'Intern' :
-                    member.role === 'Full-Time Video Editor' ? 'Editor' :
-                    member.role === 'Video Editing Head' ? 'Head' : 'Manager';
-                  return <option key={member._id} value={member._id}>{member.name} ({short})</option>;
+              <select
+                required
+                value={assignedTo}
+                onChange={(e) => setAssignedTo(e.target.value)}
+                className={`${fieldCls} appearance-none cursor-pointer`}
+                disabled={loadingOptions || team.length === 0}
+              >
+                {loadingOptions && <option value="">Loading team members...</option>}
+                {!loadingOptions && team.length === 0 && <option value="">No assignable members available</option>}
+                {!loadingOptions && team.map((member) => {
+                  const short = member.role === 'Video Editing Intern'
+                    ? 'Intern'
+                    : member.role === 'Full-Time Video Editor'
+                      ? 'Editor'
+                      : member.role === 'Video Editing Head'
+                        ? 'Head'
+                        : 'Manager';
+
+                  return (
+                    <option key={getEntityId(member)} value={getEntityId(member)}>
+                      {member.name || member.fullName} ({short})
+                    </option>
+                  );
                 })}
               </select>
+              {!loadingOptions && team.length === 0 && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Only registered Interns and Full-Time Video Editors appear here.
+                </p>
+              )}
             </div>
           </div>
 
@@ -132,11 +221,11 @@ const TaskModal = ({ isOpen, onClose, onTaskCreated }) => {
             </button>
             <button
               type="submit"
-              disabled={loading || projects.length === 0 || team.length === 0}
+              disabled={disableSubmit}
               className="w-full rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               style={{ background: 'var(--gradient-hero)', boxShadow: 'var(--shadow-button)' }}
             >
-              {loading ? 'Assigning...' : 'Assign Task'}
+              {loading ? 'Assigning...' : loadingOptions ? 'Loading...' : 'Assign Task'}
             </button>
           </div>
         </form>
