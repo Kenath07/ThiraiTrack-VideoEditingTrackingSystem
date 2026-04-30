@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { Play, Mail, Lock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
@@ -33,6 +33,13 @@ const Login = () => {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const { login }  = useContext(AuthContext);
   const navigate   = useNavigate();
+
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+    setEmailTouched(false);
+    setPasswordTouched(false);
+  }, []);
 
   const isEmailValid    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const isPasswordValid = password.length >= 6;
@@ -98,7 +105,7 @@ const Login = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">Email</label>
@@ -107,11 +114,14 @@ const Login = () => {
                 <input
                   type="email"
                   required
+                  name="login-email"
+                  autoComplete="off"
+                  inputMode="email"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setEmailTouched(true); }}
                   onBlur={() => setEmailTouched(true)}
                   className={`w-full rounded-lg pl-10 pr-10 py-3 text-foreground placeholder-muted-foreground focus:outline-none transition-all border-2 ${getInputBorderClass(emailTouched, isEmailValid)}`}
-                  placeholder="Enter your email address"
+                  placeholder="Enter your email"
                 />
                 {emailTouched && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -134,6 +144,8 @@ const Login = () => {
                 <input
                   type="password"
                   required
+                  name="login-password"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setPasswordTouched(true); }}
                   onBlur={() => setPasswordTouched(true)}
