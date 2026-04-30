@@ -1,8 +1,5 @@
 import axios from 'axios';
-
-const apiBaseUrl =
-    import.meta.env.VITE_API_URL ||
-    (import.meta.env.PROD ? window.location.origin : 'http://localhost:5000');
+import { apiBaseUrl } from './config';
 
 // Configure Axios instance with base URL and auth token interceptor
 const api = axios.create({
@@ -14,10 +11,15 @@ api.interceptors.request.use(
     (config) => {
         const user = JSON.parse(localStorage.getItem('user'));
         const token = user?.token || localStorage.getItem('token');
+        const baseUrl = config.baseURL || '';
 
         if (token) {
             config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        if (typeof config.url === 'string' && baseUrl.endsWith('/api') && config.url.startsWith('/api/')) {
+            config.url = config.url.replace(/^\/api/, '');
         }
 
         return config;

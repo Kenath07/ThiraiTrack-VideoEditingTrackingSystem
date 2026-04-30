@@ -1,14 +1,32 @@
 const mongoose = require('mongoose');
 
-// Database connection configuration
+let cachedConnection = null;
+let connectionPromise = null;
+
+// Reuse the same MongoDB connection across local restarts and serverless invocations.
 const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
-        console.log(`MongoDB Connected : ${conn.connection.host}`);
-    } catch (error) {
-        console.error(`Error connecting to MongoDB : ${error.message}`);
-        process.exit(1);
+    if (cachedConnection) {
+        return cachedConnection;
     }
+
+    if (!process.env.MONGO_URI) {
+        throw new Error('MONGO_URI is not set');
+    }
+
+    if (!connectionPromise) {
+        connectionPromise = mongoose.connect(process.env.MONGO_URI)
+            .then((conn) => {
+                cachedConnection = conn;
+                console.log(`MongoDB Connected : ${conn.connection.host}`);
+                return conn;
+            })
+            .catch((error) => {
+                connectionPromise = null;
+                throw error;
+            });
+    }
+
+    return connectionPromise;
 };
 
 module.exports = connectDB;

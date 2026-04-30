@@ -7,7 +7,7 @@ const { protect } = require('./middleware/authMiddleware');
 const app = express();
 const allowedOrigins = (process.env.CLIENT_URL || '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean);
 
 // Root route — Vercel expects a response at `/`
@@ -29,12 +29,16 @@ startServer();
 
 app.use(cors({
     origin(origin, callback) {
-        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        const normalizedOrigin = origin ? origin.replace(/\/$/, '') : origin;
+
+        if (!normalizedOrigin || allowedOrigins.length === 0 || allowedOrigins.includes(normalizedOrigin)) {
             return callback(null, true);
         }
 
         return callback(new Error('CORS blocked for this origin'));
     },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

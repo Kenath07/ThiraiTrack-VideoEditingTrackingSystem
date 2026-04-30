@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Play, User, Mail, Lock, Phone, Briefcase, Award, FileText, ArrowLeft } from 'lucide-react';
+import { withApiPath } from '../api/config';
 
 /* ── Shared Logo ── */
 // Registration page UI component
@@ -99,7 +100,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+      const response = await fetch(withApiPath('/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(trimmed),
