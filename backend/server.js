@@ -5,6 +5,10 @@ const connectDB = require('./config/db');
 const { protect } = require('./middleware/authMiddleware');
 
 const app = express();
+const allowedOrigins = (process.env.CLIENT_URL || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 // Root route — Vercel expects a response at `/`
 app.get('/', (req, res) => {
@@ -24,8 +28,13 @@ const startServer = async () => {
 startServer();
 
 app.use(cors({
-    origin: '*',
-    credentials: true
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error('CORS blocked for this origin'));
+    },
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
