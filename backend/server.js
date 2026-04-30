@@ -43,6 +43,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Ensure serverless requests wait for MongoDB before hitting route handlers.
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error('DB request guard failed:', error.message);
+        res.status(500).json({ message: 'Database connection failed' });
+    }
+});
+
 // Request logging
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
